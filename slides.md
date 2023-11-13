@@ -156,23 +156,37 @@ graph LR
 
 ---
 
-# Docker-compose
+# Docker allgemein
 
-* Grundlagen von `docker-compose`
-* Erstellen und Verwalten von Docker-Containern
-* Integration mit Systemd für automatisches Management
-* Best Practices und Tipps
+* Containerdienst
+* Keine Virtualisierung
+* Nicht komplett neu, aber sehr populär geworden
+* Einfache Verwaltung von Containern
+* Extrem viele Dienste als Container verfügbar
+* Alternativen: Podman, LXC, LXD
+
+---
+
+# Docker-compose allgemein
+
+* Einfache Verwaltung von mehreren Containern
+  * Beispiel: Nextcloud benötigt Datenbank, Redis, Cronjob, ...
+  * Konfiguration aller für einen Dienst benötigten Container in einer Datei
+  * Einfaches Starten und Stoppen aller Container
+* Oft gibt es fertige docker-compose Dateien für Dienste
 
 ---
 
-# Dienste
+# Systemd allgemein
 
-* Auswahl geeigneter Dienste für Selfhosting
-* Grundlegende Konfigurationstechniken
-* Überwachung und Wartung von Diensten
-* Troubleshooting und Problembehebung
+* Systemd ist ein Dienst, der auf Linux-Systemen läuft
+* Systemd ist für das Starten und Stoppen von Diensten zuständig
+* Systemd kann auch Container starten und stoppen
+* Mit Systemd lassen sich einfache Skripte für das Starten und Stoppen von Containern schreiben
+* Wir schreiben ein Systemd-Template für das Starten und Stoppen von Containern
 
 ---
+
 
 # Systemd Template
 
@@ -204,6 +218,39 @@ WantedBy=multi-user.target
 ```
 
 ---
+
+# Systemd template verweden
+
+* Kopieren des Templates in eine neue Datei unter dem Pfad `/etc/systemd/system/dc@.service`
+* Um einen konkreten Dienst anzulegen muss eine Datei unter `/opt/dockerfiles/<name>/docker-compose.yml` angelegt werden
+* Um den Dienst nun zu verwenden muss `systemctl enable dc@<name>` ausgeführt werden. Damit ist der Dienst automatisch beim Starten des Systems aktiviert
+* Mit `systemctl disable dc@<name>` können wir den Dienst deaktivieren
+* Ab dann können wir mit `systemctl start dc@<name>` und `systemctl stop dc@<name>` starten und stoppen
+* Mit `systemctl restart dc@<name>` können wir den Dienst neu starten
+* Mit `systemctl status dc@<name>` können wir den Status des Dienstes abfragen
+
+---
+
+# Docker-compose
+
+* Grundlagen von `docker-compose`
+* Erstellen und Verwalten von Docker-Containern
+* Integration mit Systemd für automatisches Management
+* Best Practices und Tipps
+
+---
+
+---
+
+# Dienste
+
+* Auswahl geeigneter Dienste für Selfhosting
+* Grundlegende Konfigurationstechniken
+* Überwachung und Wartung von Diensten
+* Troubleshooting und Problembehebung
+
+---
+
 
 # Diagramme
 
