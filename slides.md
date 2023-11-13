@@ -109,6 +109,7 @@ layout: default
   * `nextcloud.meinewunderbaredomain.de CNAME meineigenerusername.duckdns.org`
 
 ---
+
 # Reverse Proxy 1
 
 * Ein Reverse Proxy ist ein Server, der Anfragen an andere Server weiterleitet
