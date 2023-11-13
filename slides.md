@@ -85,6 +85,51 @@ layout: default
 
 ---
 
+# Problematik Portfreigabe
+
+* Nun muss für jeden einzelnen Dienst eine Portfreigabe eingerichtet werden
+* Zudem wird jeder Dienst via http ausgeliefert
+  * Unverschlüsselt
+  * Unsicher
+  * Viele Dienste verweitern den Dienst / müssen jedes Mal "unsicherheit akzeptieren" etc.
+* Lösung: Reverse Proxy
+
+---
+
+# DNS Konfiguration
+
+* DNS ist das System, das Domainnamen in IP-Adressen auflöst
+* Wir brauchen eine Zuordnung von einer Domain auf unsere IP, damit der Reverse Proxy die Anfragen an die richtigen Dienste weiterleiten kann
+* Problem: Wir haben keine statische IP-Adresse
+* Aber: Wir haben einen fixen Domainnamen durch den Dyndns-Dienst
+* Lösung: Wir verwenden einen CNAME-Eintrag
+* Wir setzen ALLE unsere Dienste mit EIGENEN Domains auf den CNAME-Eintrag des Dyndns Dienstes
+* Beispiel:
+  * `audiobookshelf.meinewunderbaredomain.de CNAME meineigenerusername.duckdns.org`
+  * `nextcloud.meinewunderbaredomain.de CNAME meineigenerusername.duckdns.org`
+
+---
+# Reverse Proxy 1
+
+* Ein Reverse Proxy ist ein Server, der Anfragen an andere Server weiterleitet
+* Der Reverse Proxy kann Anfragen anhand der Domain auf verschiedene Server weiterleiten
+* Reverse Proxies z.B. nginx, traefik, caddy
+* Hier im Kurs verwenden wir caddy
+
+---
+
+# Reverse Proxy 2
+
+* Vorteile Caddy:
+  * Einfache Konfiguration
+  * Automatische HTTPS-Konfiguration
+  * Automatische Zertifikatsverlängerung
+  * Open Source
+  * Resourcenschonend
+
+---
+
+
 # Beispiel Setup
 
 ```mermaid
