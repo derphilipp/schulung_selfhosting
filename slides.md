@@ -47,12 +47,28 @@ layout: default
 
 ---
 
+# Warnungen
+
+* Selfhosting ist nicht für jeden geeignet
+* Selfhosting ist nicht für jeden Dienst geeignet
+* Selfhosting ist nicht immer die einfachste/beste/günstigste/sicherste Lösung
+* Wir schauen uns EINE Art an es zu machen
+
+---
+
 # Portfreigabe
 
 * Grundlagen der Portfreigabe
 * Konfiguration des Routers für Selfhosting
 * Auswahl und Einrichtung von Dyndns-Diensten
 * Sicherheitsaspekte der Portfreigabe
+
+---
+
+# Konventionen
+
+* - Wir verwenden den Pfad `/opt/data` für alle Daten
+* - Wir verwenden den Pfad `/opt/dockerfiles` für alle docker-compose Dateien
 
 ---
 
@@ -241,8 +257,6 @@ WantedBy=multi-user.target
 
 ---
 
----
-
 # Dienste
 
 * Auswahl geeigneter Dienste für Selfhosting
@@ -290,7 +304,29 @@ database "MySql" {
 @enduml
 ```
 
-[Learn More](https://sli.dev/guide/syntax.html#diagrams)
+---
+
+# Caddy docker-compose
+
+```yaml
+version: "3.7"
+
+services:
+  caddy:
+    image: caddy:latest
+    restart: unless-stopped
+    cap_add:
+      - NET_ADMIN
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"
+    volumes:
+      - /opt/data/caddy/Caddyfile:/etc/caddy/Caddyfile
+      - /opt/data/caddy/logs:/srv/log
+      - /opt/data/caddy/data:/data
+      - /opt/data/caddy/caddy_config:/config
+```
 
 ---
 src: ./pages/multiple-entries.md
