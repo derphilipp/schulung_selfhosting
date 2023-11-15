@@ -32,7 +32,6 @@ transition: fade-out
 * Konfigurieren und Betreiben von Diensten
 * Weiter Übungen und individuelle Fragen
 
-
 ---
 layout: default
 ---
@@ -56,6 +55,38 @@ layout: default
 
 ---
 
+# Betriebssystem
+
+* Ein beliebiges Linux-Betriebssystem
+* Empfehlungen:
+  * Debian Linux (stabil, einfach, viele Pakete, viele Anleitungen, viele Nutzer)
+  * Raspberry Pi OS (baut auf Debian auf, für Raspberry Pi optimiert)
+  * Ubuntu Server (stabil, einfach, viele Pakete)
+* Prinzipiell geht auch jedes andere Linux-Betriebssystem (Sytemd und Docker müssen laufen)
+* Gentoo, Arch Linux und NixOS sind tolle Betriebssysteme, aber nicht für Anfänger geeignet
+
+---
+
+# Hardware
+
+* In diesem Kurs verwende ich eine Virtuelle Maschine mit Debian Linux
+* Es kann aber auch andere Systeme verwendet werden
+* Wichtig: Systemd und Docker müssen laufen
+* Wir brauchen später den Pfad von `docker-compose` (je nach System Unterschiedlich)
+* 1 GB Ram sollte ausreichen für Betriebssystem und Basis-Dienste
+* Bei Resourcenhungrigen Diensten (z.B. Nextcloud) mehr Ram verwenden
+* Der Computer / Raspberry Pi / VM braucht eine eigene IP-Adresse im lokalen Netzwerk (statisch/fest vergeben)
+
+---
+
+# Hardware anschaffen - Tipps
+
+* Raspberry Pi 4/5, aber System auf externe SSD installieren
+* Gebrauchte Hardware, oft sind Siemens, HP oder Dell Büro Desktops günstig zu bekommen (ca. 100-150€)
+* Alternativ für diesen Kurs kann eine Virtuelle Maschine verwendet werden (z.B. Virtualbox)
+
+---
+
 # Portfreigabe
 
 * Grundlagen der Portfreigabe
@@ -67,8 +98,9 @@ layout: default
 
 # Konventionen
 
-* - Wir verwenden den Pfad `/opt/data` für alle Daten
-* - Wir verwenden den Pfad `/opt/dockerfiles` für alle docker-compose Dateien
+* Wir verwenden den Pfad `/opt/data` für alle Daten
+* Wir verwenden den Pfad `/opt/dockerfiles` für alle docker-compose Dateien
+* Wir verwenden den Namen `dc@.service` für unsere Template-Datei
 
 ---
 
@@ -201,6 +233,14 @@ graph LR
 * Systemd kann auch Container starten und stoppen
 * Mit Systemd lassen sich einfache Skripte für das Starten und Stoppen von Containern schreiben
 * Wir schreiben ein Systemd-Template für das Starten und Stoppen von Containern
+
+---
+
+# Docker installieren
+
+* `apt install docker docker-compose` als root oder
+* `sudo apt install docker docker-compose` als normaler Benutzer
+* Testen: `docker pull alpine`
 
 ---
 
