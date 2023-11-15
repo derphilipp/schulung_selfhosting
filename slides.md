@@ -64,6 +64,7 @@ layout: default
   * Ubuntu Server (stabil, einfach, viele Pakete)
 * Prinzipiell geht auch jedes andere Linux-Betriebssystem (Sytemd und Docker müssen laufen)
 * Gentoo, Arch Linux und NixOS sind tolle Betriebssysteme, aber nicht für Anfänger geeignet
+* Für heutigen Kurs: Debian Linux, DVD-Image (iso) herunterladen und installieren
 
 ---
 
@@ -238,8 +239,10 @@ graph LR
 
 # Docker installieren
 
-* `apt install docker docker-compose` als root oder
-* `sudo apt install docker docker-compose` als normaler Benutzer
+* Befehler als root ausführen oder mit `sudo` voranstellen
+* `apt update`
+* `apt install nano` (für einen einfachen Editor)
+* `apt install docker docker-compose` (für Docker und Docker-compose)
 * Testen: `docker pull alpine`
 
 ---
