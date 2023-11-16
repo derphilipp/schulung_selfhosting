@@ -157,8 +157,8 @@ layout: default
 * Lösung: Wir verwenden einen CNAME-Eintrag
 * Wir setzen ALLE unsere Dienste mit EIGENEN Domains auf den CNAME-Eintrag des Dyndns Dienstes
 * Beispiel:
-  * `audiobookshelf.meinewunderbaredomain.de CNAME meineigenerusername.duckdns.org`
-  * `nextcloud.meinewunderbaredomain.de CNAME meineigenerusername.duckdns.org`
+  * `audiobookshelf.my-own-personal-domain.com CNAME meineigenerusername.duckdns.org`
+  * `jellyfin.my-own-personal-domain.com CNAME meineigenerusername.duckdns.org`
 
 ---
 
@@ -193,16 +193,18 @@ graph LR
     D --> F[Audiobookshelf Container]
     D --> G[Weitere Container]
 
-    subgraph Homeserver mit Docker
+subgraph Heimnetz
+  direction TB
+  B
+  subgraph Homeserver mit Docker
     D
     E
     F
     G
-    end
+  end
+end
 
 ```
----
-
 
 ---
 
@@ -275,7 +277,6 @@ graph LR
 * Wir verwenden in diesem Kurs fast ausschließlich fertige docker-compose Dateien
 * Weitere docker-compose Dateien finden wir oft bei den jeweiligen Projekten (z.B. Nextcloud)
 
-
 ---
 
 # Systemd allgemein
@@ -322,6 +323,10 @@ graph LR
     end
 
 ```
+
+---
+
+# Docker basics
 
 ---
 
@@ -424,15 +429,15 @@ services:
 `/opt/data/caddy/Caddyfile`:
 Mit willkürlicher Emailadresse, Domain, IP-Adresse und Port
 
-```caddy
+```text
 {
-  email meine@emailadresse.domain
+  email myname@my-own-personal-domain.com
   log {
     output file /srv/log/caddy.log
   }
 }
 
-meinservice.meinedomain.de {
+meinservice.my-own-personal-domain.com {
   reverse_proxy 192.168.10.130:8141
 }
 ```
@@ -451,6 +456,15 @@ meinservice.meinedomain.de {
 * Für jede Domain einen eigenen Block anlegen!
 * Wichtig: Dienste, die nicht aus dem Internet erreichbar sind/sein sollen brauchen auf anderem Weg Zertifikate (z.B. via DNS Challenge)
   * Diese Lösungen sind aber nicht Teil dieses Kurses
+
+---
+
+# Caddy 5
+
+* Bei privaten Diensten (nur im eigenen Netz verfügbar)
+* Öffentliches `CANME` auf lokale IP Adresse
+* Alternative: Lokaler DNS-Server, der die Domain auf die lokale IP-Adresse auflöst
+* Alternative Wege für Zertifikate notwendig (z.B. Wildcard Zertifikate)
 
 ---
 
@@ -497,74 +511,117 @@ WantedBy=multi-user.target
 
 ---
 
-# Docker-compose
+# Dienst Audiobookshelf
 
-* Grundlagen von `docker-compose`
-* Erstellen und Verwalten von Docker-Containern
-* Integration mit Systemd für automatisches Management
-* Best Practices und Tipps
+* [Audiobookshelf](https://www.audiobookshelf.org/) ist ein Dienst zum Verwalten von Hörbüchern
+* Audiobookshelf ist ein Dienst, der auf Node.js basiert
 
----
+```yaml
+version: "3.7"
 
-# Dienste
+services:
+  audiobookshelf:
+    image: ghcr.io/advplyr/audiobookshelf
+    ports:
+      - 8472:80
+    volumes:
+      - /opt/data/audiobookshelf/audiobooks:/audiobooks
+      - /opt/data/audiobookshelf/metadata:/metadata
+      - /opt/data/audiobookshelf/config:/config
+    restart: unless-stopped
 
-* Auswahl geeigneter Dienste für Selfhosting
-* Grundlegende Konfigurationstechniken
-* Überwachung und Wartung von Diensten
-* Troubleshooting und Problembehebung
-
----
-
-
-# Diagramme
-
-```plantuml {scale: 0.7}
-@startuml
-
-package "Some Group" {
-  HTTP - [First Component]
-  [Another Component]
-}
-
-node "Other Groups" {
-  FTP - [Second Component]
-  [First Component] --> FTP
-}
-
-cloud {
-  [Example 1]
-}
-
-
-database "MySql" {
-  folder "This is my folder" {
-    [Folder 3]
-  }
-  frame "Foo" {
-    [Frame 4]
-  }
-}
-
-
-[Another Component] --> [Example 1]
-[Example 1] --> [Folder 3]
-[Folder 3] --> [Frame 4]
-
-@enduml
 ```
 
-
-
----
-src: ./pages/multiple-entries.md
-hide: false
 ---
 
----
-layout: center
-class: text-center
+# Dienst Jellyfin 1
+
+* [Jellyfin](https://jellyfin.org/) ist ein Dienst zum Verwalten von Medien
+* Jellyfin ist ein Dienst, der auf .NET basiert
+* Jellyfin erlaubt das Streamen von Videos und Musik und das Anschauen von Bildern
+* Jellyfin kann auch als DLNA-Server verwendet werden
+* Als Clients können z.B. Amazon Fire Sticks, Kodi, VLC, Android-Apps, iOS-Apps, Webbrowser verwendet werden
+
 ---
 
-# Learn More
+# Dienst Jellyfin 2
 
-[Documentations](https://sli.dev) · [GitHub](https://github.com/slidevjs/slidev) · [Showcases](https://sli.dev/showcases.html)
+```yaml
+version: '3.5'
+services:
+  jellyfin:
+    image: jellyfin/jellyfin
+    container_name: jellyfin
+    user: 1000:1000
+    network_mode: 'host'
+    volumes:
+      - /opt/data/jellyfin/config:/config
+      - /opt/data/jellyfin/cache:/cache
+      - /opt/data/jellyfin/media:/media
+    restart: 'unless-stopped'
+    # Optional - alternative address used for autodiscovery
+    environment:
+      - JELLYFIN_PublishedServerUrl=http://jellyfin.my-own-personal-domain.com
+    # Optional - may be necessary for docker healthcheck to pass if running in host network mode
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+```
+
+---
+
+# Dienst Wordpress 1
+
+* [Wordpress](https://wordpress.org/) ist ein Dienst zum Verwalten von Webseiten
+* Wordpress ist ein Dienst, der auf PHP basiert
+* Wordpress erlaubt das Erstellen von Webseiten mit einem WYSIWYG-Editor
+* Wordpress kann mit Themes und Plugins erweitert werden
+* Wordpress kann auch als Blog verwendet werden
+* Wordpress ist das beliebteste CMS (Content Management System) der Welt
+* Achtung: Wordpress braucht neben Docker auch Plugin und Theme Updates!
+
+---
+
+# Dienst Wordpress 2
+
+```yaml
+version: '3.9'
+services:
+    wordpress:
+        image: wordpress:latest
+        depends_on:
+            - db
+        ports:
+            - 8002:80
+        restart: always
+        environment:
+            WORDPRESS_DB_HOST: db:3306
+            WORDPRESS_DB_USER: wordpress
+            WORDPRESS_DB_PASSWORD: wordpress
+        volumes:
+            - /opt/data/wp_myhomepage/wordpress/:/var/www/html/
+    db:
+        image: "mariadb:10"
+        restart: 'always'
+        volumes:
+            - /opt/data/wp_myhomepage/mariadb:/var/lib/mysql
+        environment:
+            MARIADB_ROOT_PASSWORD: geology-carve-delirious-ventricle-blinking-sprite
+            MARIADB_DATABASE: wordpress
+            MARIADB_USER: wordpress
+            MARIADB_PASSWORD: wordpress
+
+```
+
+---
+
+# Weitere Resourcen
+
+* [Awesome Selfhosted](https://github.com/awesome-selfhosted/awesome-selfhosted)
+* [Subreddit Selfhosted](https://www.reddit.com/r/selfhosted/)
+* [Awesome Docker](https://github.com/veggiemonk/awesome-docker)
+
+---
+
+# Abschluss
+
+[Diese Schulung](https://github.com/derphilipp/schulung_selfhosting) · [Schulung ansehen](https://derphilipp.github.io/schulung_selfhosting) · [Kontakt](https://philipp-weissmann.de)
