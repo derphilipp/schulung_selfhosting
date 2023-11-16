@@ -203,11 +203,6 @@ graph LR
 ```
 ---
 
-# Caddy
-
-* Einführung in Caddy
-* Automatische HTTPS-Konfiguration
-* Einrichtung als Reverse-Proxy
 
 ---
 
@@ -279,6 +274,7 @@ graph LR
 * Oft gibt es fertige docker-compose Dateien für Dienste
 * Wir verwenden in diesem Kurs fast ausschließlich fertige docker-compose Dateien
 * Weitere docker-compose Dateien finden wir oft bei den jeweiligen Projekten (z.B. Nextcloud)
+
 
 ---
 
@@ -383,6 +379,81 @@ services:
 
 ---
 
+# Caddy 1
+
+* Unsere Dienste (z.B. hello-world) sind nun über http erreichbar
+* Wir wollen aber https verwenden
+* Lösung: Reverse-Proxy
+* Wir verwenden caddy als Reverse-Proxy
+* Alternativen: nginx, traefik, haproxy, ...
+* Vorteile caddy:
+  * Einfache Konfiguration
+  * Automatische HTTPS-Konfiguration
+  * Automatische Zertifikatsverlängerung
+
+---
+
+# Caddy 2
+
+`docker-compose.yml`:
+
+```yaml
+version: "3.7"
+
+services:
+  caddy:
+    image: caddy:latest
+    restart: unless-stopped
+    cap_add:
+      - NET_ADMIN
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"
+    volumes:
+      - /opt/data/caddy/Caddyfile:/etc/caddy/Caddyfile
+      - /opt/data/caddy/logs:/srv/log
+      - /opt/data/caddy/data:/data
+      - /opt/data/caddy/caddy_config:/config
+```
+
+---
+
+# Caddy 3
+
+`/opt/data/caddy/Caddyfile`:
+Mit willkürlicher Emailadresse, Domain, IP-Adresse und Port
+
+```caddy
+{
+  email meine@emailadresse.domain
+  log {
+    output file /srv/log/caddy.log
+  }
+}
+
+meinservice.meinedomain.de {
+  reverse_proxy 192.168.10.130:8141
+}
+```
+---
+
+# Caddy 4
+
+* Da praktische: Caddy besorgt automatisch Zertifikate von Let's Encrypt
+* Für die Challenge muss der Dienst aus dem Internet erreichbar sein
+* Die Domain muss auf die IP-Adresse zeigen (z.B. via `CNAME` Eintrag)
+* Wir brauchen nur angeben:
+  * Emailadresse
+  * (Sub-)Domain
+  * Ip des Dienstes
+  * Port des Dienstes
+* Für jede Domain einen eigenen Block anlegen!
+* Wichtig: Dienste, die nicht aus dem Internet erreichbar sind/sein sollen brauchen auf anderem Weg Zertifikate (z.B. via DNS Challenge)
+  * Diese Lösungen sind aber nicht Teil dieses Kurses
+
+---
+
 # Systemd Template
 
 ```systemd
@@ -482,29 +553,7 @@ database "MySql" {
 @enduml
 ```
 
----
 
-# Caddy docker-compose
-
-```yaml
-version: "3.7"
-
-services:
-  caddy:
-    image: caddy:latest
-    restart: unless-stopped
-    cap_add:
-      - NET_ADMIN
-    ports:
-      - "80:80"
-      - "443:443"
-      - "443:443/udp"
-    volumes:
-      - /opt/data/caddy/Caddyfile:/etc/caddy/Caddyfile
-      - /opt/data/caddy/logs:/srv/log
-      - /opt/data/caddy/data:/data
-      - /opt/data/caddy/caddy_config:/config
-```
 
 ---
 src: ./pages/multiple-entries.md
