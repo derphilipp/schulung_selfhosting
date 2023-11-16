@@ -614,6 +614,88 @@ services:
 
 ---
 
+# Backup
+
+---
+
+# Wartung 1
+
+* Das System selbst muss regelmäßig gewartet werden
+* Das Betriebssystem muss regelmäßig aktualisiert werden
+  * Hier sind auch automatisierte Updates möglich
+  * Achtung: Updates können auch Probleme verursachen
+  * Zudem: Betriebssystem werden nicht unendlich lange unterstützt -> Langfristig updaten ist wichtig!
+
+---
+
+# Wartung 2
+
+* Docker Images müssen regelmäßig aktualisiert werden
+  * Strategien hier sind enorm unterschiedlich
+  * Manche Images werden nur alle paar Monate aktualisiert
+  * Manche Images werden täglich aktualisiert
+  * Achtung bei Image updates
+    * Vielleicht sind Updates nicht kompatibel ohne migration
+    * Manche Dienste brauchen manuelle Updates bei Versionswechseln (Neue führende Nummer bei der Versionsnummer?)
+    * Manche Dienste brauchen manuelles Patchen auf der Kommandozeile
+    * Wir müssen uns also pro Dienst informieren, wie wir Updates durchführen
+  * Vor Updates IMMER Backups anfertigen
+
+---
+
+# Wartung 3
+
+* Neben dem aktualisieren neuer Docker Images sollten die alten entfernt werden (Speicherplatz!)
+* Dies passiert z.B. mit dem `docker system prune` Befehl
+* Achtung: Dieser Befehl entfernt auch alle nicht mehr verwendeten Volumes!
+* Allgemeiner Tipp: Tool [topgrade](https://github.com/topgrade-rs/topgrade) verwenden, um System und Docker Images zu aktualisieren
+
+---
+
+# Backup 1
+
+* "Kein Backup - Kein Mitleid" -> Wir brauchen Backup
+* Backup ist sehr gut überschaubar mit:
+  * Nur Daten-Ordner (keine Volumes) und alle unter `/opt/data` legen
+  * Alle Docker-Definitionen unter `/opt/dockerfiles`
+  * Alle Systemd-Definitionen unter `/etc/systemd/system`
+* Also sichern wir vor allem diese Pfade
+* Wir können auf einem anderen System / anderen Rechner die Daten einfach wiederherstellen
+  * Wichtig: Dort müssen die Pfade gleich sein!
+  * Zudem: Wir brauchen wieder unser Systemd-Template und müssen die Dienste "anknipsen"
+* Backup-Tool Empfehlung: `restic` (für Backups auf externe Festplatten, in die Cloud oder überall hin)
+
+---
+
+# Backup 2
+
+* Wichtig: Was sichern wir alles?
+* Mein Vorschlag:
+* Pfade mit sichern:
+  * `/opt/data`
+  * `/opt/dockerfiles`
+  * `/etc/systemd/system`
+* Das ganze je nach Bedarf zwischen wöchentlich und täglich ausführen
+
+
+---
+
+# Backup 3
+
+* Eigenschaften von `restic`:
+  * Inkrementelle Backups: Nur neue Daten werden gesichert.
+  * Cloud Backends: Backups können in die Cloud gesichert werden.
+  * Verschlüsselung: Backups werden sicher verschlüsselt.
+  * Deduplizierung: Datenbestandteile, die in anderen gefunden werden, werden nicht erneut gesichert.
+    * Beispiel: Wenn zwei Bilder identisch sind, wird nur eines gesichert.
+    * Speichern zwei Rechner die gleiche Datei, wird diese nur einmal gesichert.
+    * Sogar in Datei-Fragmenten wird dedupliziert.
+  * Effizient: restic ist sehr effizient und schnell.
+  * Betriebssystem: restic läuft auf Linux, macOS und Windows.
+* Webseite: [restic.net](https://restic.net/)
+
+---
+
 # Weitere Resourcen
 
 * [Awesome Selfhosted](https://github.com/awesome-selfhosted/awesome-selfhosted)
