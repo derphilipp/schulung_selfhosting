@@ -85,6 +85,9 @@ layout: default
 * Raspberry Pi 4/5, aber System auf externe SSD installieren
 * Gebrauchte Hardware, oft sind Siemens, HP oder Dell Büro Desktops günstig zu bekommen (ca. 100-150€)
 * Alternativ für diesen Kurs kann eine Virtuelle Maschine verwendet werden (z.B. Virtualbox)
+* Tipp: Bei etwas potentem Rechner: Proxmox VE installieren und VMs erstellen
+  * Für verschiedene Anwendungszwecke verschiedene Betriebssysteme
+* Achtung: ARM Prozessoren (z.B. Raspberry) sind oft günstig / energiesparend, aber manche Docker Images gibt es nicht dafür (inzwischen sehr selten)
 
 ---
 
@@ -184,15 +187,17 @@ layout: default
 
 ```mermaid
 graph LR
-    A[Internet] -->|Port 443| B[DSL Router]
+    A[Internet] -->|Ports 80,443| B[DSL Router]
     B --> |Port Forwarding| D[Caddy]
     D --> E[Nextcloud Container]
     D --> F[Audiobookshelf Container]
+    D --> G[Weitere Container]
 
     subgraph Homeserver mit Docker
     D
     E
     F
+    G
     end
 
 ```
@@ -206,14 +211,62 @@ graph LR
 
 ---
 
-# Docker allgemein
+# Docker Allgemein 1
 
 * Containerdienst
-* Keine Virtualisierung
+* Keine Virtualisierung des vollen Betriebssystems
 * Nicht komplett neu, aber sehr populär geworden
 * Einfache Verwaltung von Containern
 * Extrem viele Dienste als Container verfügbar
 * Alternativen: Podman, LXC, LXD
+  * Etliche davon nutzen identische Images, sind also voll kompatibel!
+* Lokale Sicherheit:
+  * Achtung bei der Verwendung von Docker: Haben lokale Benutzer Rechte auf Docker können sie root-Rechte erlangen!
+  * Images aus fremden Quellen können Schadcode enthalten
+
+---
+
+# Docker Allgemein 2
+
+* Image: Ein Image ist eine Vorlage für einen Container (z.B. ein Webserver Image)
+* Container: Ein Container ist eine isolierte Umgebung, die eine Anwendung ausführen kann
+* Vergleich bei Programmiersprachen: Image ist wie eine Klasse, Container ist wie ein Objekt
+* `Dockerfile`: Eine Datei, die ein Image beschreibt (wenn man z.B. selbst ein Image erstellen möchte)
+
+---
+
+# Docker Allgemein 3
+
+* `docker-compose`: Tool um mehrere Container zu verwalten
+* `docker-compose.yml`: Eine Datei im YAML Format, die mehrere Container beschreibt
+* Volumes
+  * Ein **Ordner**, der von einem Container verwendet wird
+  * Kann in einen **lokalen Ordner** gemountet werden
+  * Kann auch als **Volume-Container** verwendet werden
+  * Es können auch **Geräte** und **Dienste** gemountet werden (z.B. X-Server, Drucker, ...)
+
+---
+
+# Docker Allgemein 4
+
+* Fertige Docker Images können aus dem Internet heruntergeladen werden
+* Manchmal gibt es auch Dockerfile Dateien, mit denen man selbst Images erstellen kann
+* Oft gibt es fertige Images für Dienste
+* Diese finden sich oft auf [Docker Hub](https://hub.docker.com/)
+
+---
+
+# Docker Allgemein 5
+
+* Tags
+  * Images haben neben ihrem Namen noch einen Tag (z.B. `nginx:latest` oder `nginx:1.19.10`)
+  * Immer `latest` zu nehmen ist nicht immer empfehlenswert, da sich die Images ändern können. Updatepfade beachten!
+  * Niemals zu aktualisieren ist nicht empfehlenswert, da Sicherheitslücken auftreten können
+  * ➡️ Kompromiss aus aktualisieren und Komfort finden
+  * Varianten
+    * Oft gibt es verschiedene Varianten eines Images (z.B. `nginx:alpine`, `nginx:1.19.10-alpine`)
+    * Diese Beschreiben oft das Basis-Image auf dem die Software Aufbaut (oft: `alpine` oder `debian`)
+    * Macnhmal auch die verwendete Technolgie (z.B. `nextcloud:fpm` oder `nextcloud:apache`)
 
 ---
 
@@ -224,12 +277,14 @@ graph LR
   * Konfiguration aller für einen Dienst benötigten Container in einer Datei
   * Einfaches Starten und Stoppen aller Container
 * Oft gibt es fertige docker-compose Dateien für Dienste
+* Wir verwenden in diesem Kurs fast ausschließlich fertige docker-compose Dateien
+* Weitere docker-compose Dateien finden wir oft bei den jeweiligen Projekten (z.B. Nextcloud)
 
 ---
 
 # Systemd allgemein
 
-* Systemd ist ein Dienst, der auf Linux-Systemen läuft
+* Systemd ist ein Dienst, der auf vielen Linux-Systemen läuft
 * Systemd ist für das Starten und Stoppen von Diensten zuständig
 * Systemd kann auch Container starten und stoppen
 * Mit Systemd lassen sich einfache Skripte für das Starten und Stoppen von Containern schreiben
@@ -243,10 +298,90 @@ graph LR
 * `apt update`
 * `apt install nano` (für einen einfachen Editor)
 * `apt install docker docker-compose` (für Docker und Docker-compose)
-* Testen: `docker pull alpine`
+* Testen: `docker pull alpine` (ggf. mit `sudo`)
 
 ---
 
+# Docker ausführen
+
+Beispielcontainer:
+
+```sh
+docker run --rm -p 1234:80 tutum/hello-world
+```
+
+* `--rm` entfernt den Container nach dem Beenden
+* `-p 1234:80` leitet den Port 1234 auf Port 80 im Container weiter
+* `tutum/hello-world` ist der Name des Images, das wir verwenden
+* Nun können wir auf [http://IP_ADRESSE:1234](http://IP_ADRESSE:1234) zugreifen
+
+```mermaid
+graph LR
+    A[Netzwerk] -->|Port 1234| B[Netzwerk-Interface]
+    B --> |Port 80| C[Container]
+    subgraph Host
+    B
+    C
+
+    end
+
+```
+
+---
+
+# Docker-compose Einführung
+
+* Wenn wir den gleichen Dienst nun mit `docker-compose` nutzen wollen, brauchen wir eine `docker-compose.yml` Datei
+
+```yaml
+version: "3.7" # Versionsnummer von docker-compose
+
+services:
+  hello-world: # Beliebig wählbarer Name unserers Dienstes
+    image: tutum/hello-world # Name des Images
+    ports:
+      - "1234:80" # Portweiterleitung
+```
+
+* Befehl zum Starten:
+
+```sh
+docker-compose up
+```
+
+---
+
+# Docker Helfer
+
+⚠️ Bei allen Helfern muss Zugriff auf Docker erfolgen. Dies wird oft mit dem mounten des Docker-Sockets erreicht. Dies ist ein Sicherheitsrisiko - daher dürfen die Tools niemals ins Internet freigegeben werden.
+
+* [Lazydocker](https://github.com/jesseduffield/lazydocker): Terminal UI für Docker
+* [Portainer CE](https://www.portainer.io/) (Community Edition): Web UI für Docker
+
+
+---
+
+# Portainer als Beispiel
+
+`docker-compose.yml`:
+
+```yaml
+version: "3"
+services:
+  portainer:
+    image: portainer/portainer-ce:latest
+    ports:
+      - 9443:9443
+      volumes:
+        - /opt/data/portainer/data:/data
+        - /var/run/docker.sock:/var/run/docker.sock
+    restart: unless-stopped
+```
+
+* Volumes binden den Ordner `/opt/data/portainer/data` auf den Ordner `/data` im Container. Dort speichert Portainer seine Daten
+* Der Ordner `/var/run/docker.sock` ist der Socket, über den Portainer mit Docker kommuniziert -> Wir geben diesen Ordner in den Container
+
+---
 
 # Systemd Template
 
