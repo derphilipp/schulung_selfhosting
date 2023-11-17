@@ -53,7 +53,6 @@ layout: default
 * Selfhosting ist nicht immer die einfachste/beste/günstigste/sicherste Lösung
 * Wir schauen uns EINE Art an es zu machen
 
-
 ---
 
 # Betriebssystem
@@ -73,6 +72,15 @@ layout: default
 
 * [VMWare](https://www.virtualbox.org)
 * [Debian Linux](https://cdimage.debian.org/debian-cd/current/amd64/iso-dvd/) (amd64, dvd image)
+
+---
+
+# Accounts
+
+* Domain bei einem Domain-Provider (z.B. Febas, AWS, etc.)
+  * Login zur Hand haben
+* Account bei einem Dyndns-Dienst (z.B. Duckdns)
+  * Login zur Hand haben
 
 ---
 
