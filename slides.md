@@ -55,6 +55,35 @@ layout: default
 
 ---
 
+# Beispiel Setup
+
+* Jellyfin
+* Audiobookshelf
+* Beides mit HTTPS
+
+```mermaid
+graph LR
+    A[Internet] -->|Ports 80,443| B[DSL Router]
+    B --> |Port Forwarding| D[Caddy]
+    D --> E[Jellyfin Container]
+    D --> F[Audiobookshelf Container]
+    D --> G[Weitere Container]
+
+subgraph Heimnetz
+  direction TB
+  B
+  subgraph Homeserver mit Docker
+    D
+    E
+    F
+    G
+  end
+end
+
+```
+
+---
+
 # Betriebssystem
 
 * Ein beliebiges Linux-Betriebssystem
@@ -107,35 +136,6 @@ layout: default
 
 ---
 
-# Dyndns - 1
-
-* Dyndns ist ein Dienst, der eine Domain mit einer IP-Adresse verknüpft
-* Wir brauchen einen Dyndns-Dienst, um unsere IP-Adresse mit einer Domain zu verknüpfen
-* Wir brauchen eine Domain, um unsere Dienste von außen erreichbar zu machen
-* [Duckdns](https://www.duckdns.org/) ist ein kostenloser Dyndns-Dienst
-* Mit der Anleitung des jeweiligen Dienstes können wir die IP-Adresse an den Dyndns-Dienst melden
-  * Viele Router haben eine eingebaute Funktion dafür
-  * Ansonsten gibt es auch Programme, die die IP-Adresse an den Dyndns-Dienst melden können
-
----
-
-# Dyndns - 2
-
-* Prüfen der Konfiguration:
-  * Abrufen des dyndns dienstes
-  * `dig audiobookshelf.my-own-personal-domain.com`
-  * Hier sollte die IP-Adresse meiner eigener Adresse angezeigt werden
-
----
-
-# Portfreigabe
-
-* Grundlagen der Portfreigabe
-* Konfiguration des Routers für Selfhosting
-* Auswahl und Einrichtung von Dyndns-Diensten
-* Sicherheitsaspekte der Portfreigabe
-
----
 
 # Konventionen
 
@@ -144,120 +144,7 @@ layout: default
 * Wir verwenden den Namen `dc@.service` für unsere Template-Datei
 * Diese Konventionen sind nicht zwingend notwendig, aber erleichtern das Verständnis
 
----
 
-# Portfreigabe - 1
-
-* Portfreigabe ist notwendig, um Dienste von außen erreichbar zu machen
-* Manche Service Provider erlauben keinerlei Portfreigaben
-* Portfreigabe ist ein Sicherheitsrisiko, sollten also vorsichtig eingesetzt werden
-
----
-
-# Portfreigabe - 2
-
-* Zumeist muss ein Router so eingerichtet werden, dass dieser Anfragen an einen bestimmten Port an einen bestimmten Rechner im lokalen Netzwerk weiterleitet
-* Die IP-Adresse des Rechners sollte statisch sein, damit die Portfreigabe nicht bei jeder Änderung der IP-Adresse neu eingerichtet werden muss
-  * Entweder immer die gleiche IP adresse vergeben (z.B. via Router)
-  * Oder IP Adresse statisch vergeben
-* Die Portfreigabe sollte nur für die Ports eingerichtet werden, die tatsächlich benötigt werden
-* Die Portfreigabe sollte nur für die Protokolle eingerichtet werden, die tatsächlich benötigt werden
-
----
-
-# Portfreigabe - 3
-
-* Falls kein Vertrag mit statischer IP (teuer!) vorhanden ist, muss eine dynamische IP-Adresse mit einem Dyndns-Dienst verknüpft werden
-* Dyndns Dienst verknüpft eine Domain mit einer IP-Adresse
-* Der Router muss die IP-Adresse an den Dyndns-Dienst melden
-* Der Router muss die IP-Adresse regelmäßig an den Dyndns-Dienst melden
-* Beispiel für Dyndns Dienst: duckdns.org
-
----
-
-# Problematik Portfreigabe
-
-* Nun muss für jeden einzelnen Dienst eine Portfreigabe eingerichtet werden
-* Zudem wird jeder Dienst via http ausgeliefert
-  * Unverschlüsselt
-  * Unsicher
-  * Viele Dienste verweitern den Dienst / müssen jedes Mal "unsicherheit akzeptieren" etc.
-* Lösung: Reverse Proxy
-
----
-
-# DNS Konfiguration - 1
-
-* DNS ist das System, das Domainnamen in IP-Adressen auflöst
-* Wir brauchen eine Zuordnung von einer Domain auf unsere IP, damit der Reverse Proxy die Anfragen an die richtigen Dienste weiterleiten kann
-* Problem: Wir haben keine statische IP-Adresse
-* Aber: Wir haben einen fixen Domainnamen durch den Dyndns-Dienst
-* Lösung: Wir verwenden einen CNAME-Eintrag
-* Wir setzen ALLE unsere Dienste mit EIGENEN Domains auf den CNAME-Eintrag des Dyndns Dienstes
-* Beispiel:
-  * `audiobookshelf.my-own-personal-domain.com CNAME meineigenerusername.duckdns.org`
-  * `jellyfin.my-own-personal-domain.com CNAME meineigenerusername.duckdns.org`
-
----
-
-# DNS Konfiguration - 2
-
-* Prüfen der Konfiguration:
-  * Wir prüfen nun den CNAME-Eintrag:
-  * `dig audiobookshelf.my-own-personal-domain.com`
-  * Hier sollte erst der `CNAME` von unserer Domain auf unserer Dyndns Domain zeigen
-  * Ein zweiter Eintrage sollte die IP-Adresse unseres Routers zeigen
-* Ist der `CNAME` Eintrag nicht vorhanden
-  * Eintrag prüfen
-  * Es kann dauern, bis der Eintrag aktualisiert ist
-* Ist die Ip Adresse des Dyndns Eintrags nicht aktuell
-  * Dyndns aktualisierung prüfen (Router, Skript, manuell)
-
----
-
-# Reverse Proxy - 1
-
-* Ein Reverse Proxy ist ein Server, der Anfragen an andere Server weiterleitet
-* Der Reverse Proxy kann Anfragen anhand der Domain auf verschiedene Server weiterleiten
-* Reverse Proxies z.B. nginx, traefik, caddy
-* Hier im Kurs verwenden wir caddy
-
----
-
-# Reverse Proxy - 2
-
-* Vorteile Caddy:
-  * Einfache Konfiguration
-  * Automatische HTTPS-Konfiguration
-  * Automatische Zertifikatsverlängerung
-  * Open Source
-  * Resourcenschonend
-
----
-
-
-# Beispiel Setup
-
-```mermaid
-graph LR
-    A[Internet] -->|Ports 80,443| B[DSL Router]
-    B --> |Port Forwarding| D[Caddy]
-    D --> E[Nextcloud Container]
-    D --> F[Audiobookshelf Container]
-    D --> G[Weitere Container]
-
-subgraph Heimnetz
-  direction TB
-  B
-  subgraph Homeserver mit Docker
-    D
-    E
-    F
-    G
-  end
-end
-
-```
 
 ---
 
@@ -330,15 +217,7 @@ end
 * Wir verwenden in diesem Kurs fast ausschließlich fertige docker-compose Dateien
 * Weitere docker-compose Dateien finden wir oft bei den jeweiligen Projekten (z.B. Nextcloud)
 
----
 
-# Systemd allgemein
-
-* Systemd ist ein Dienst, der auf vielen Linux-Systemen läuft
-* Systemd ist für das Starten und Stoppen von Diensten zuständig
-* Systemd kann auch Container starten und stoppen
-* Mit Systemd lassen sich einfache Skripte für das Starten und Stoppen von Containern schreiben
-* Wir schreiben ein Systemd-Template für das Starten und Stoppen von Containern
 
 ---
 
@@ -372,14 +251,9 @@ graph LR
     subgraph Host
     B
     C
-
     end
 
 ```
-
----
-
-# Docker basics
 
 ---
 
@@ -449,6 +323,127 @@ services:
 
 * Volumes binden den Ordner `/opt/data/portainer/data` auf den Ordner `/data` im Container. Dort speichert Portainer seine Daten
 * Der Ordner `/var/run/docker.sock` ist der Socket, über den Portainer mit Docker kommuniziert -> Wir geben diesen Ordner in den Container
+
+---
+
+# Portfreigabe allgemein
+
+* Grundlagen der Portfreigabe
+* Konfiguration des Routers für Selfhosting
+* Auswahl und Einrichtung von Dyndns-Diensten
+* Sicherheitsaspekte der Portfreigabe
+
+---
+
+# Portfreigabe - 1
+
+* Portfreigabe ist notwendig, um Dienste von außen erreichbar zu machen
+* Manche Service Provider erlauben keinerlei Portfreigaben
+* Portfreigabe ist ein Sicherheitsrisiko, sollten also vorsichtig eingesetzt werden
+
+---
+
+# Portfreigabe - 2
+
+* Zumeist muss ein Router so eingerichtet werden, dass dieser Anfragen an einen bestimmten Port an einen bestimmten Rechner im lokalen Netzwerk weiterleitet
+* Die IP-Adresse des Rechners sollte statisch sein, damit die Portfreigabe nicht bei jeder Änderung der IP-Adresse neu eingerichtet werden muss
+  * Entweder immer die gleiche IP adresse vergeben (z.B. via Router)
+  * Oder IP Adresse statisch vergeben
+* Die Portfreigabe sollte nur für die Ports eingerichtet werden, die tatsächlich benötigt werden
+* Die Portfreigabe sollte nur für die Protokolle eingerichtet werden, die tatsächlich benötigt werden
+
+---
+
+# Portfreigabe - 3
+
+* Falls kein Vertrag mit statischer IP (teuer!) vorhanden ist, muss eine dynamische IP-Adresse mit einem Dyndns-Dienst verknüpft werden
+* Dyndns Dienst verknüpft eine Domain mit einer IP-Adresse
+* Der Router muss die IP-Adresse an den Dyndns-Dienst melden
+* Der Router muss die IP-Adresse regelmäßig an den Dyndns-Dienst melden
+* Beispiel für Dyndns Dienst: duckdns.org
+
+---
+
+# Problematik Portfreigabe
+
+* Nun muss für jeden einzelnen Dienst eine Portfreigabe eingerichtet werden
+* Zudem wird jeder Dienst via http ausgeliefert
+  * Unverschlüsselt
+  * Unsicher
+  * Viele Dienste verweitern den Dienst / müssen jedes Mal "unsicherheit akzeptieren" etc.
+* Lösung: Reverse Proxy
+
+---
+
+# DNS Konfiguration - 1
+
+* DNS ist das System, das Domainnamen in IP-Adressen auflöst
+* Wir brauchen eine Zuordnung von einer Domain auf unsere IP, damit der Reverse Proxy die Anfragen an die richtigen Dienste weiterleiten kann
+* Problem: Wir haben keine statische IP-Adresse
+* Aber: Wir haben einen fixen Domainnamen durch den Dyndns-Dienst
+* Lösung: Wir verwenden einen CNAME-Eintrag
+* Wir setzen ALLE unsere Dienste mit EIGENEN Domains auf den CNAME-Eintrag des Dyndns Dienstes
+* Beispiel:
+  * `audiobookshelf.my-own-personal-domain.com CNAME meineigenerusername.duckdns.org`
+  * `jellyfin.my-own-personal-domain.com CNAME meineigenerusername.duckdns.org`
+
+---
+
+# DNS Konfiguration - 2
+
+* Prüfen der Konfiguration:
+  * Wir prüfen nun den CNAME-Eintrag:
+  * `dig audiobookshelf.my-own-personal-domain.com`
+  * Hier sollte erst der `CNAME` von unserer Domain auf unserer Dyndns Domain zeigen
+  * Ein zweiter Eintrage sollte die IP-Adresse unseres Routers zeigen
+* Ist der `CNAME` Eintrag nicht vorhanden
+  * Eintrag prüfen
+  * Es kann dauern, bis der Eintrag aktualisiert ist
+* Ist die Ip Adresse des Dyndns Eintrags nicht aktuell
+  * Dyndns aktualisierung prüfen (Router, Skript, manuell)
+
+
+---
+
+# Dyndns - 1
+
+* Dyndns ist ein Dienst, der eine Domain mit einer IP-Adresse verknüpft
+* Wir brauchen einen Dyndns-Dienst, um unsere IP-Adresse mit einer Domain zu verknüpfen
+* Wir brauchen eine Domain, um unsere Dienste von außen erreichbar zu machen
+* [Duckdns](https://www.duckdns.org/) ist ein kostenloser Dyndns-Dienst
+* Mit der Anleitung des jeweiligen Dienstes können wir die IP-Adresse an den Dyndns-Dienst melden
+  * Viele Router haben eine eingebaute Funktion dafür
+  * Ansonsten gibt es auch Programme, die die IP-Adresse an den Dyndns-Dienst melden können
+
+---
+
+# Dyndns - 2
+
+* Prüfen der Konfiguration:
+  * Abrufen des dyndns dienstes
+  * `dig audiobookshelf.my-own-personal-domain.com`
+  * Hier sollte die IP-Adresse meiner eigener Adresse angezeigt werden
+
+---
+
+# Reverse Proxy - 1
+
+* Ein Reverse Proxy ist ein Server, der Anfragen an andere Server weiterleitet
+* Der Reverse Proxy kann Anfragen anhand der Domain auf verschiedene Server weiterleiten
+* Reverse Proxies z.B. nginx, traefik, caddy
+* Hier im Kurs verwenden wir caddy
+* Alternative Empfehlung: traefik
+
+---
+
+# Reverse Proxy - 2
+
+* Vorteile Caddy:
+  * Einfache Konfiguration
+  * Automatische HTTPS-Konfiguration
+  * Automatische Zertifikatsverlängerung
+  * Open Source
+  * Resourcenschonend
 
 ---
 
@@ -530,9 +525,19 @@ meinservice.my-own-personal-domain.com {
 # Caddy - 5
 
 * Bei privaten Diensten (nur im eigenen Netz verfügbar)
-* Öffentliches `CANME` auf lokale IP Adresse
+* Öffentliches `CNAME` auf lokale IP Adresse
 * Alternative: Lokaler DNS-Server, der die Domain auf die lokale IP-Adresse auflöst
 * Alternative Wege für Zertifikate notwendig (z.B. Wildcard Zertifikate)
+
+---
+
+# Systemd allgemein
+
+* Systemd ist ein Dienst, der auf vielen Linux-Systemen läuft
+* Systemd ist für das Starten und Stoppen von Diensten zuständig
+* Systemd kann auch Container starten und stoppen
+* Mit Systemd lassen sich einfache Skripte für das Starten und Stoppen von Containern schreiben
+* Wir schreiben ein Systemd-Template für das Starten und Stoppen von Containern
 
 ---
 
@@ -679,10 +684,6 @@ services:
             MARIADB_PASSWORD: wordpress
 
 ```
-
----
-
-# Backup
 
 ---
 
