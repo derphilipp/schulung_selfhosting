@@ -53,6 +53,7 @@ layout: default
 * Selfhosting ist nicht immer die einfachste/beste/günstigste/sicherste Lösung
 * Wir schauen uns EINE Art an es zu machen
 
+
 ---
 
 # Betriebssystem
@@ -65,6 +66,13 @@ layout: default
 * Prinzipiell geht auch jedes andere Linux-Betriebssystem (Sytemd und Docker müssen laufen)
 * Gentoo, Arch Linux und NixOS sind tolle Betriebssysteme, aber nicht für Anfänger geeignet
 * Für heutigen Kurs: Debian Linux, DVD-Image (iso) herunterladen und installieren
+
+---
+
+# Downloads
+
+* [VMWare](https://www.virtualbox.org)
+* [Debian Linux](https://cdimage.debian.org/debian-cd/current/amd64/iso-dvd/) (amd64, dvd image)
 
 ---
 
@@ -108,7 +116,7 @@ layout: default
 
 ---
 
-# Portfreigabe 1
+# Portfreigabe - 1
 
 * Portfreigabe ist notwendig, um Dienste von außen erreichbar zu machen
 * Manche Service Provider erlauben keinerlei Portfreigaben
@@ -116,7 +124,7 @@ layout: default
 
 ---
 
-# Portfreigabe 2
+# Portfreigabe - 2
 
 * Zumeist muss ein Router so eingerichtet werden, dass dieser Anfragen an einen bestimmten Port an einen bestimmten Rechner im lokalen Netzwerk weiterleitet
 * Die IP-Adresse des Rechners sollte statisch sein, damit die Portfreigabe nicht bei jeder Änderung der IP-Adresse neu eingerichtet werden muss
@@ -127,7 +135,7 @@ layout: default
 
 ---
 
-# Portfreigabe 3
+# Portfreigabe - 3
 
 * Falls kein Vertrag mit statischer IP (teuer!) vorhanden ist, muss eine dynamische IP-Adresse mit einem Dyndns-Dienst verknüpft werden
 * Dyndns Dienst verknüpft eine Domain mit einer IP-Adresse
@@ -162,7 +170,7 @@ layout: default
 
 ---
 
-# Reverse Proxy 1
+# Reverse Proxy - 1
 
 * Ein Reverse Proxy ist ein Server, der Anfragen an andere Server weiterleitet
 * Der Reverse Proxy kann Anfragen anhand der Domain auf verschiedene Server weiterleiten
@@ -171,7 +179,7 @@ layout: default
 
 ---
 
-# Reverse Proxy 2
+# Reverse Proxy - 2
 
 * Vorteile Caddy:
   * Einfache Konfiguration
@@ -208,7 +216,7 @@ end
 
 ---
 
-# Docker Allgemein 1
+# Docker Allgemein - 1
 
 * Containerdienst
 * Keine Virtualisierung des vollen Betriebssystems
@@ -223,7 +231,7 @@ end
 
 ---
 
-# Docker Allgemein 2
+# Docker Allgemein - 2
 
 * Image: Ein Image ist eine Vorlage für einen Container (z.B. ein Webserver Image)
 * Container: Ein Container ist eine isolierte Umgebung, die eine Anwendung ausführen kann
@@ -232,7 +240,7 @@ end
 
 ---
 
-# Docker Allgemein 3
+# Docker Allgemein - 3
 
 * `docker-compose`: Tool um mehrere Container zu verwalten
 * `docker-compose.yml`: Eine Datei im YAML Format, die mehrere Container beschreibt
@@ -244,7 +252,7 @@ end
 
 ---
 
-# Docker Allgemein 4
+# Docker Allgemein - 4
 
 * Fertige Docker Images können aus dem Internet heruntergeladen werden
 * Manchmal gibt es auch Dockerfile Dateien, mit denen man selbst Images erstellen kann
@@ -253,7 +261,7 @@ end
 
 ---
 
-# Docker Allgemein 5
+# Docker Allgemein - 5
 
 * Tags
   * Images haben neben ihrem Namen noch einen Tag (z.B. `nginx:latest` oder `nginx:1.19.10`)
@@ -330,7 +338,7 @@ graph LR
 
 ---
 
-# Docker-compose Einführung
+# Docker-compose Einführung - 1
 
 * Wenn wir den gleichen Dienst nun mit `docker-compose` nutzen wollen, brauchen wir eine `docker-compose.yml` Datei
 
@@ -349,6 +357,21 @@ services:
 ```sh
 docker-compose up
 ```
+
+---
+
+# Docker-compose Einführung - 2
+
+* Weitere Befehle mit `docker-compose`
+  * `docker-compose pull` Lade alle in `docker-compose.yml` benutzen Images herunter
+  * `docker-compose up` Starte alle in `docker-compose.yml` benutzen Container
+  * `docker-compose down` Stoppe alle in `docker-compose.yml` benutzen Container
+  * `docker-compose logs` Zeige Logs aller in `docker-compose.yml` benutzen Container
+  * `docker-compose ps` Zeige Status aller in `docker-compose.yml` benutzen Container
+  * `docker-compose exec <name> <command>` Führe `<command>` in Container `<name>` aus
+    * Damit kommt man in laufende Container via Kommandozeile hinein
+    * Hier können aber auch Helfer das Leben erleichtern (z.B. lazydocker)
+
 
 ---
 
@@ -384,7 +407,7 @@ services:
 
 ---
 
-# Caddy 1
+# Caddy - 1
 
 * Unsere Dienste (z.B. hello-world) sind nun über http erreichbar
 * Wir wollen aber https verwenden
@@ -398,7 +421,7 @@ services:
 
 ---
 
-# Caddy 2
+# Caddy - 2
 
 `docker-compose.yml`:
 
@@ -424,7 +447,7 @@ services:
 
 ---
 
-# Caddy 3
+# Caddy - 3
 
 `/opt/data/caddy/Caddyfile`:
 Mit willkürlicher Emailadresse, Domain, IP-Adresse und Port
@@ -443,7 +466,7 @@ meinservice.my-own-personal-domain.com {
 ```
 ---
 
-# Caddy 4
+# Caddy - 4
 
 * Da praktische: Caddy besorgt automatisch Zertifikate von Let's Encrypt
 * Für die Challenge muss der Dienst aus dem Internet erreichbar sein
@@ -459,7 +482,7 @@ meinservice.my-own-personal-domain.com {
 
 ---
 
-# Caddy 5
+# Caddy - 5
 
 * Bei privaten Diensten (nur im eigenen Netz verfügbar)
 * Öffentliches `CANME` auf lokale IP Adresse
@@ -534,7 +557,7 @@ services:
 
 ---
 
-# Dienst Jellyfin 1
+# Dienst Jellyfin - 1
 
 * [Jellyfin](https://jellyfin.org/) ist ein Dienst zum Verwalten von Medien
 * Jellyfin ist ein Dienst, der auf .NET basiert
@@ -544,7 +567,7 @@ services:
 
 ---
 
-# Dienst Jellyfin 2
+# Dienst Jellyfin - 2
 
 ```yaml
 version: '3.5'
@@ -569,7 +592,7 @@ services:
 
 ---
 
-# Dienst Wordpress 1
+# Dienst Wordpress - 1
 
 * [Wordpress](https://wordpress.org/) ist ein Dienst zum Verwalten von Webseiten
 * Wordpress ist ein Dienst, der auf PHP basiert
@@ -581,7 +604,7 @@ services:
 
 ---
 
-# Dienst Wordpress 2
+# Dienst Wordpress - 2
 
 ```yaml
 version: '3.9'
@@ -618,7 +641,7 @@ services:
 
 ---
 
-# Wartung 1
+# Wartung - 1
 
 * Das System selbst muss regelmäßig gewartet werden
 * Das Betriebssystem muss regelmäßig aktualisiert werden
@@ -628,7 +651,7 @@ services:
 
 ---
 
-# Wartung 2
+# Wartung - 2
 
 * Docker Images müssen regelmäßig aktualisiert werden
   * Strategien hier sind enorm unterschiedlich
@@ -643,7 +666,7 @@ services:
 
 ---
 
-# Wartung 3
+# Wartung - 3
 
 * Neben dem aktualisieren neuer Docker Images sollten die alten entfernt werden (Speicherplatz!)
 * Dies passiert z.B. mit dem `docker system prune` Befehl
@@ -652,7 +675,7 @@ services:
 
 ---
 
-# Backup 1
+# Backup - 1
 
 * "Kein Backup - Kein Mitleid" -> Wir brauchen Backup
 * Backup ist sehr gut überschaubar mit:
@@ -667,7 +690,7 @@ services:
 
 ---
 
-# Backup 2
+# Backup - 2
 
 * Wichtig: Was sichern wir alles?
 * Mein Vorschlag:
@@ -680,7 +703,7 @@ services:
 
 ---
 
-# Backup 3
+# Backup - 3
 
 * Eigenschaften von `restic`:
   * Inkrementelle Backups: Nur neue Daten werden gesichert.
