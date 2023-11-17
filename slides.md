@@ -99,6 +99,27 @@ layout: default
 
 ---
 
+# Dyndns - 1
+
+* Dyndns ist ein Dienst, der eine Domain mit einer IP-Adresse verknüpft
+* Wir brauchen einen Dyndns-Dienst, um unsere IP-Adresse mit einer Domain zu verknüpfen
+* Wir brauchen eine Domain, um unsere Dienste von außen erreichbar zu machen
+* [Duckdns](https://www.duckdns.org/) ist ein kostenloser Dyndns-Dienst
+* Mit der Anleitung des jeweiligen Dienstes können wir die IP-Adresse an den Dyndns-Dienst melden
+  * Viele Router haben eine eingebaute Funktion dafür
+  * Ansonsten gibt es auch Programme, die die IP-Adresse an den Dyndns-Dienst melden können
+
+---
+
+# Dyndns - 2
+
+* Prüfen der Konfiguration:
+  * Abrufen des dyndns dienstes
+  * `dig audiobookshelf.my-own-personal-domain.com`
+  * Hier sollte die IP-Adresse meiner eigener Adresse angezeigt werden
+
+---
+
 # Portfreigabe
 
 * Grundlagen der Portfreigabe
@@ -113,6 +134,7 @@ layout: default
 * Wir verwenden den Pfad `/opt/data` für alle Daten
 * Wir verwenden den Pfad `/opt/dockerfiles` für alle docker-compose Dateien
 * Wir verwenden den Namen `dc@.service` für unsere Template-Datei
+* Diese Konventionen sind nicht zwingend notwendig, aber erleichtern das Verständnis
 
 ---
 
@@ -156,7 +178,7 @@ layout: default
 
 ---
 
-# DNS Konfiguration
+# DNS Konfiguration - 1
 
 * DNS ist das System, das Domainnamen in IP-Adressen auflöst
 * Wir brauchen eine Zuordnung von einer Domain auf unsere IP, damit der Reverse Proxy die Anfragen an die richtigen Dienste weiterleiten kann
@@ -167,6 +189,21 @@ layout: default
 * Beispiel:
   * `audiobookshelf.my-own-personal-domain.com CNAME meineigenerusername.duckdns.org`
   * `jellyfin.my-own-personal-domain.com CNAME meineigenerusername.duckdns.org`
+
+---
+
+# DNS Konfiguration - 2
+
+* Prüfen der Konfiguration:
+  * Wir prüfen nun den CNAME-Eintrag:
+  * `dig audiobookshelf.my-own-personal-domain.com`
+  * Hier sollte erst der `CNAME` von unserer Domain auf unserer Dyndns Domain zeigen
+  * Ein zweiter Eintrage sollte die IP-Adresse unseres Routers zeigen
+* Ist der `CNAME` Eintrag nicht vorhanden
+  * Eintrag prüfen
+  * Es kann dauern, bis der Eintrag aktualisiert ist
+* Ist die Ip Adresse des Dyndns Eintrags nicht aktuell
+  * Dyndns aktualisierung prüfen (Router, Skript, manuell)
 
 ---
 
