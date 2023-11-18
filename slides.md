@@ -790,6 +790,15 @@ services:
 
 ---
 
+# Weitere Imspiration für Services
+
+* [Immich](https://github.com/immich-app/immich) ist ein Dienst für Bilder-Backup von Mobilgeräten
+* [Nextcloud](https://nextcloud.com/) ist ein Dienst für Datei-Backup und Synchronisation
+* [Wallabag](https://wallabag.org/) ist ein Dienst zum Speichern von Webseiten
+* [Paperless ngx](https://github.com/paperless-ngx/paperless-ngx) ist ein Dienst zum Speichern von (gescannten) Dokumenten
+
+---
+
 # Weitere Resourcen
 
 * [Awesome Selfhosted](https://github.com/awesome-selfhosted/awesome-selfhosted)
