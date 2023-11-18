@@ -113,6 +113,21 @@ end
 
 ---
 
+# Ip Adresse des Servers feststellen
+
+* `ip a s` oder `ifconfig` auf dem Server ausführen
+* Die IP-Adresse des Interfaces notieren, das mit dem Internet verbunden ist
+* Achtung bei VirtualBox kann hier es notwendig sein, den Netzwerkmodus auf "Bridged" zu stellen
+
+---
+
+# Root user via ssh
+
+* Es ist nicht gestattet als `root` user via ssh einzuloggen
+* Daher melden wir uns als "normaler" User an und wechseln auf den Root account mit `su -`
+
+---
+
 # Accounts
 
 * Domain bei einem Domain-Provider (z.B. Febas, AWS, etc.)
