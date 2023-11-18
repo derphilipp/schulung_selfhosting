@@ -339,9 +339,9 @@ services:
     image: portainer/portainer-ce:latest
     ports:
       - 9443:9443
-      volumes:
-        - /opt/data/portainer/data:/data
-        - /var/run/docker.sock:/var/run/docker.sock
+    volumes:
+      - /opt/data/portainer/data:/data
+      - /var/run/docker.sock:/var/run/docker.sock
     restart: unless-stopped
 ```
 
