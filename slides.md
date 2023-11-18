@@ -104,6 +104,14 @@ end
 
 ---
 
+# Tricks für Datenübertragung
+
+* SSH Server nutzen
+* Alternativ: [wormhole-william](https://github.com/psanford/wormhole-william) installieren und nutzen
+  * Gibt es für mac/linux/windows und erlaubt einfache Dateiübertragung - auch von Zwischenablage
+
+---
+
 # Accounts
 
 * Domain bei einem Domain-Provider (z.B. Febas, AWS, etc.)
