@@ -533,6 +533,7 @@ meinservice.my-own-personal-domain.com {
 # Caddy - 4
 
 * Da praktische: Caddy besorgt automatisch Zertifikate von Let's Encrypt
+* ACHTUNG! Sowohl der Port 80 als auch der Port 443 müssen auf den Caddy Container weitergeleitet werden
 * Für die Challenge muss der Dienst aus dem Internet erreichbar sein
 * Die Domain muss auf die IP-Adresse zeigen (z.B. via `CNAME` Eintrag)
 * Wir brauchen nur angeben:
