@@ -99,7 +99,7 @@ end
 
 # Downloads
 
-* [VMWare](https://www.virtualbox.org)
+* [Virtualbox](https://www.virtualbox.org)
 * [Debian Linux](https://cdimage.debian.org/debian-cd/current/amd64/iso-dvd/) (amd64, dvd image)
 
 ---
