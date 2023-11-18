@@ -107,6 +107,7 @@ end
 # Tricks für Datenübertragung
 
 * SSH Server nutzen
+  * Client für Windows z.B. [Putty](https://www.chiark.greenend.org.uk/~sgtatham/putty/latest.html)
 * Alternativ: [wormhole-william](https://github.com/psanford/wormhole-william) installieren und nutzen
   * Gibt es für mac/linux/windows und erlaubt einfache Dateiübertragung - auch von Zwischenablage
 
