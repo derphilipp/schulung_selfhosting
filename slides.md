@@ -91,7 +91,7 @@ end
   * Debian Linux (stabil, einfach, viele Pakete, viele Anleitungen, viele Nutzer)
   * Raspberry Pi OS (baut auf Debian auf, für Raspberry Pi optimiert)
   * Ubuntu Server (stabil, einfach, viele Pakete)
-* Prinzipiell geht auch jedes andere Linux-Betriebssystem (Sytemd und Docker müssen laufen)
+* Prinzipiell geht auch jedes andere Linux-Betriebssystem (Systemd und Docker müssen laufen)
 * Gentoo, Arch Linux und NixOS sind tolle Betriebssysteme, aber nicht für Anfänger geeignet
 * Für heutigen Kurs: Debian Linux, DVD-Image (iso) herunterladen und installieren
 
