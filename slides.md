@@ -104,10 +104,36 @@ end
 
 ---
 
+# Kein Computer 1 - Doch Cloud?
+
+* Statt eines Computers kann für diesen Kurs auch ein Vserver gebucht werden
+* Hier empfiehlt sich ein Anbieter, der Minutengenaue Abrechnung hat
+* Beispiel: Hetzner (aber auch AWS, Azure, Google Cloud, etc.)
+  * hier reicht der günstigste VServer aus
+  * auch ARM64 Platform ist möglich
+  * auch eine IP Adresse ist notwendig und muss gebucht werden
+  * am besten vorher schon SSH Key generieren und beim erstellen des VServers nutzen
+* Nach Abschluss der Schulung kann der VServer wieder gekündigt werden
+
+---
+
+# Kein Computer 2 - Doch Cloud?
+
+* Bei vielen Anbietern erfolgt Minutengenaue Abrechnung
+* Es entfallen aber Kosten für Strom, Wartung, etc.
+* Routing und dyndns entfallen!
+* Achtung:
+  * VServer sind nicht immer günstiger als ein eigener Computer
+  * Meist bedeutet "Stoppen" nur einfrieren des VServers
+  * Löschen ist notwendig um Kosten zu vermeiden
+
+---
+
 # Tricks für Datenübertragung
 
 * SSH Server nutzen
   * Client für Windows z.B. [Putty](https://www.chiark.greenend.org.uk/~sgtatham/putty/latest.html)
+  * Windows hat seit Windows 10 einen SSH Client eingebaut
 * Alternativ: [wormhole-william](https://github.com/psanford/wormhole-william) installieren und nutzen
   * Gibt es für mac/linux/windows und erlaubt einfache Dateiübertragung - auch von Zwischenablage
 
@@ -286,8 +312,6 @@ graph LR
 * Wenn wir den gleichen Dienst nun mit `docker-compose` nutzen wollen, brauchen wir eine `docker-compose.yml` Datei
 
 ```yaml
-version: "3.7" # Versionsnummer von docker-compose
-
 services:
   hello-world: # Beliebig wählbarer Name unserers Dienstes
     image: tutum/hello-world # Name des Images
@@ -333,7 +357,6 @@ docker-compose up
 `docker-compose.yml`:
 
 ```yaml
-version: "3"
 services:
   portainer:
     image: portainer/portainer-ce:latest
@@ -682,7 +705,6 @@ services:
 # Dienst Wordpress - 2
 
 ```yaml
-version: '3.9'
 services:
     wordpress:
         image: wordpress:latest
@@ -790,7 +812,7 @@ services:
 
 ---
 
-# Weitere Imspiration für Services
+# Weitere Inspiration für Services
 
 * [Immich](https://github.com/immich-app/immich) ist ein Dienst für Bilder-Backup von Mobilgeräten
 * [Nextcloud](https://nextcloud.com/) ist ein Dienst für Datei-Backup und Synchronisation
