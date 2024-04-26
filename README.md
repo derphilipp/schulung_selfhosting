@@ -1,11 +1,17 @@
-# Welcome to [Slidev](https://github.com/slidevjs/slidev)!
+# Selfhosting - Schulung
 
-To start the slide show:
+## Schulung ansehen
+
+Sehen Sie diese Präsentation auf [Github Pages](https://derphilipp.github.io/schulung_selfhosting/).
+
+## Weiterentwickeln
+
+Lokal die Präsentation starten:
 
 - `npm install`
 - `npm run dev`
-- visit http://localhost:3030
+- Besuchen Sie http://localhost:3030
 
-Edit the [slides.md](./slides.md) to see the changes.
+Bearbeiten Sie die [slides.md](./slides.md), um die Änderungen zu sehen.
 
-Learn more about Slidev on [documentations](https://sli.dev/).
+Erfahren Sie mehr über Slidev in den [Dokumentationen](https://sli.dev/).

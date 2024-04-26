@@ -513,7 +513,6 @@ services:
 `docker-compose.yml`:
 
 ```yaml
-version: "3.7"
 
 services:
   caddy:
@@ -638,7 +637,6 @@ WantedBy=multi-user.target
 * Audiobookshelf ist ein Dienst, der auf Node.js basiert
 
 ```yaml
-version: "3.7"
 
 services:
   audiobookshelf:
@@ -668,7 +666,6 @@ services:
 # Dienst Jellyfin - 2
 
 ```yaml
-version: '3.5'
 services:
   jellyfin:
     image: jellyfin/jellyfin
